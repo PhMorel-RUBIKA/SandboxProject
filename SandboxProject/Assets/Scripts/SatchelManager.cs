@@ -20,14 +20,13 @@ public class SatchelManager : MonoBehaviour
     [SerializeField] private GameObject attackColliderGameObject;
     [SerializeField] private string layerMaskName;
     [SerializeField] private CameraShake.Properties explosionCameraShake;
-
+    
     public SatchelAmmo[] _satchelAmmos;
     public static SatchelManager instance;
     private NewControls _input = null;
-    private bool _activeSatchel = false;
-    private GameObject _currentSatchel;
     private bool _satchelExploded;
     private Collider[] _explosionCollider;
+    
     private Vector3[] dir;
     private float time;
     
@@ -59,7 +58,8 @@ public class SatchelManager : MonoBehaviour
     {
         _input.Enable();
         _input.Player.DropSatchel.performed += OnSatchelDropPerformed;
-        _input.Player.ExplodeSatchel.performed += OnSatchelExplodePerformed;
+        _input.Player.ExplodeFirstSatchel.performed += OnSatchelFirstExplodePerformed;
+        _input.Player.ExplodeSecondSatchel.performed += OnSatchelSecondExplodePerformed;
     }
 
     private void OnDisable()
@@ -111,10 +111,18 @@ public class SatchelManager : MonoBehaviour
         }
     }
 
-    private void OnSatchelExplodePerformed(InputAction.CallbackContext value)
+    private void OnSatchelFirstExplodePerformed(InputAction.CallbackContext value)
     {
-        if (!_activeSatchel) return;
-        ExplodeSatchel(_currentSatchel);
+        if (_satchelAmmos[0].gameObject != null) ExplodeSatchel(_satchelAmmos[0].gameObject);
+        _satchelAmmos[0].gameObject = null;
+        _satchelAmmos[0].isAvailable = true;
+    }
+    
+    private void OnSatchelSecondExplodePerformed(InputAction.CallbackContext value)
+    {
+        if (_satchelAmmos[1].gameObject != null) ExplodeSatchel(_satchelAmmos[1].gameObject);
+        _satchelAmmos[1].gameObject = null;
+        _satchelAmmos[1].isAvailable = true;
     }
 
     public void ExplodeSatchel(GameObject activeSatchel)
@@ -136,17 +144,14 @@ public class SatchelManager : MonoBehaviour
 
         Instantiate(explosionVFX, activeSatchel.transform.position, Quaternion.identity);
         CameraShake.instance.StartShake(explosionCameraShake);
-
-        _currentSatchel = null;
-        _activeSatchel = false;
+        
         Destroy(activeSatchel);
     }
 
     private void DropSatchelAmmo(int id)
     {
         _satchelAmmos[id].isAvailable = false;
-        _currentSatchel = Instantiate(satchelPrefab, player.position, Quaternion.identity);
-        _activeSatchel = true;
+        _satchelAmmos[id].gameObject = Instantiate(satchelPrefab, player.position, Quaternion.identity);
         _satchelAmmos[id].uiImage.fillAmount = 0;
         timer[id] = 0;
         stopTimer[id] = false;
@@ -172,6 +177,7 @@ public class SatchelManager : MonoBehaviour
     {
         public Image uiImage;
         public bool isAvailable;
+        public GameObject gameObject;
     }
 
 }

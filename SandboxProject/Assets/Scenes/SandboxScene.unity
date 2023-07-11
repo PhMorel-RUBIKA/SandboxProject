@@ -1677,8 +1677,10 @@ MonoBehaviour:
   _satchelAmmos:
   - uiImage: {fileID: 2009270429}
     isAvailable: 1
+    gameObject: {fileID: 0}
   - uiImage: {fileID: 1774776846}
     isAvailable: 1
+    gameObject: {fileID: 0}
   timer: []
   stopTimer: 
 --- !u!4 &967710002
@@ -2998,7 +3000,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1775462273
 RectTransform:
   m_ObjectHideFlags: 0

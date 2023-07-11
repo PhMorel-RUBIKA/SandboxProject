@@ -37,9 +37,18 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": true
                 },
                 {
-                    ""name"": ""ExplodeSatchel"",
+                    ""name"": ""Explode First Satchel"",
                     ""type"": ""Button"",
                     ""id"": ""adca051c-dced-43a3-8532-575f0c4518f4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Explode Second Satchel"",
+                    ""type"": ""Button"",
+                    ""id"": ""11bb473f-a4b0-4760-93cf-06ad2edd1077"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -70,22 +79,33 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""2de2d519-692c-463a-b9f8-bfc46885e85d"",
-                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ExplodeSatchel"",
+                    ""action"": ""Explode First Satchel"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
                     ""id"": ""d500ba75-928f-4e6d-b68a-b02a8b0bc851"",
-                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Drop Satchel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6d251ea6-c066-4be7-8015-f5a7cac06d1c"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Explode Second Satchel"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -125,7 +145,8 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Movement = m_Player.FindAction("Movement", throwIfNotFound: true);
-        m_Player_ExplodeSatchel = m_Player.FindAction("ExplodeSatchel", throwIfNotFound: true);
+        m_Player_ExplodeFirstSatchel = m_Player.FindAction("Explode First Satchel", throwIfNotFound: true);
+        m_Player_ExplodeSecondSatchel = m_Player.FindAction("Explode Second Satchel", throwIfNotFound: true);
         m_Player_DropSatchel = m_Player.FindAction("Drop Satchel", throwIfNotFound: true);
         // Menu
         m_Menu = asset.FindActionMap("Menu", throwIfNotFound: true);
@@ -192,14 +213,16 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Player;
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Movement;
-    private readonly InputAction m_Player_ExplodeSatchel;
+    private readonly InputAction m_Player_ExplodeFirstSatchel;
+    private readonly InputAction m_Player_ExplodeSecondSatchel;
     private readonly InputAction m_Player_DropSatchel;
     public struct PlayerActions
     {
         private @NewControls m_Wrapper;
         public PlayerActions(@NewControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement => m_Wrapper.m_Player_Movement;
-        public InputAction @ExplodeSatchel => m_Wrapper.m_Player_ExplodeSatchel;
+        public InputAction @ExplodeFirstSatchel => m_Wrapper.m_Player_ExplodeFirstSatchel;
+        public InputAction @ExplodeSecondSatchel => m_Wrapper.m_Player_ExplodeSecondSatchel;
         public InputAction @DropSatchel => m_Wrapper.m_Player_DropSatchel;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
@@ -213,9 +236,12 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
             @Movement.started += instance.OnMovement;
             @Movement.performed += instance.OnMovement;
             @Movement.canceled += instance.OnMovement;
-            @ExplodeSatchel.started += instance.OnExplodeSatchel;
-            @ExplodeSatchel.performed += instance.OnExplodeSatchel;
-            @ExplodeSatchel.canceled += instance.OnExplodeSatchel;
+            @ExplodeFirstSatchel.started += instance.OnExplodeFirstSatchel;
+            @ExplodeFirstSatchel.performed += instance.OnExplodeFirstSatchel;
+            @ExplodeFirstSatchel.canceled += instance.OnExplodeFirstSatchel;
+            @ExplodeSecondSatchel.started += instance.OnExplodeSecondSatchel;
+            @ExplodeSecondSatchel.performed += instance.OnExplodeSecondSatchel;
+            @ExplodeSecondSatchel.canceled += instance.OnExplodeSecondSatchel;
             @DropSatchel.started += instance.OnDropSatchel;
             @DropSatchel.performed += instance.OnDropSatchel;
             @DropSatchel.canceled += instance.OnDropSatchel;
@@ -226,9 +252,12 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
             @Movement.started -= instance.OnMovement;
             @Movement.performed -= instance.OnMovement;
             @Movement.canceled -= instance.OnMovement;
-            @ExplodeSatchel.started -= instance.OnExplodeSatchel;
-            @ExplodeSatchel.performed -= instance.OnExplodeSatchel;
-            @ExplodeSatchel.canceled -= instance.OnExplodeSatchel;
+            @ExplodeFirstSatchel.started -= instance.OnExplodeFirstSatchel;
+            @ExplodeFirstSatchel.performed -= instance.OnExplodeFirstSatchel;
+            @ExplodeFirstSatchel.canceled -= instance.OnExplodeFirstSatchel;
+            @ExplodeSecondSatchel.started -= instance.OnExplodeSecondSatchel;
+            @ExplodeSecondSatchel.performed -= instance.OnExplodeSecondSatchel;
+            @ExplodeSecondSatchel.canceled -= instance.OnExplodeSecondSatchel;
             @DropSatchel.started -= instance.OnDropSatchel;
             @DropSatchel.performed -= instance.OnDropSatchel;
             @DropSatchel.canceled -= instance.OnDropSatchel;
@@ -298,7 +327,8 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
     public interface IPlayerActions
     {
         void OnMovement(InputAction.CallbackContext context);
-        void OnExplodeSatchel(InputAction.CallbackContext context);
+        void OnExplodeFirstSatchel(InputAction.CallbackContext context);
+        void OnExplodeSecondSatchel(InputAction.CallbackContext context);
         void OnDropSatchel(InputAction.CallbackContext context);
     }
     public interface IMenuActions
