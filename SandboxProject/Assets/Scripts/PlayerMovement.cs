@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
     private float time;
     private bool timePass;
     [HideInInspector] public NewControls _input = null;
-    private Vector2 _moveVector = Vector2.zero;
+    public Vector2 _moveVector = Vector2.zero;
     private Rigidbody _rb = null;
 
     private void Awake()
@@ -35,8 +35,9 @@ public class PlayerMovement : MonoBehaviour
         _input.Player.Movement.performed += OnMovementPerformed;
         _input.Player.Movement.canceled += OnMovementCancelled;
         _input.Menu.Restart.performed += OnRestartButton;
-        _input.Player.Aim.performed += AimBehavior.instance.OnAimPerformed;
-        _input.Player.Aim.canceled += AimBehavior.instance.OnAimCancelled;
+        //_input.Player.Aim.performed += AimBehavior.instance.OnAimPerformed;
+        //_input.Player.Aim.canceled += AimBehavior.instance.OnAimCancelled;
+        _input.Player.Dash.performed += PlayerDash.instance.OnDashPerformed;
     }
 
     private void OnDisable()
@@ -45,8 +46,10 @@ public class PlayerMovement : MonoBehaviour
         _input.Player.Movement.performed -= OnMovementPerformed;
         _input.Player.Movement.canceled -= OnMovementCancelled;
         _input.Menu.Restart.performed -= OnRestartButton;
-        _input.Player.Aim.performed -= AimBehavior.instance.OnAimPerformed;
-        _input.Player.Aim.canceled -= AimBehavior.instance.OnAimCancelled;
+        //_input.Player.Aim.performed -= AimBehavior.instance.OnAimPerformed;
+        //_input.Player.Aim.canceled -= AimBehavior.instance.OnAimCancelled;
+        _input.Player.Dash.performed -= PlayerDash.instance.OnDashPerformed;
+
     }
 
     private void Update()

@@ -101,7 +101,7 @@ public class SatchelManager : MonoBehaviour
         }
     }
 
-    private void OnSatchelDropPerformed(InputAction.CallbackContext value)
+    public void OnSatchelDropPerformed(InputAction.CallbackContext value)
     {
         for (int i = 0; i < _satchelAmmos.Length; i++)
         {
@@ -145,7 +145,7 @@ public class SatchelManager : MonoBehaviour
     private void DropSatchelAmmo(int id)
     {
         _satchelAmmos[id].isAvailable = false;
-        _currentSatchel = Instantiate(satchelPrefab, AimBehavior.instance.finalAimPos, Quaternion.identity);
+        _currentSatchel = Instantiate(satchelPrefab, PlayerDash.instance.transform.position, Quaternion.identity);
         _activeSatchel = true;
         _satchelAmmos[id].uiImage.fillAmount = 0;
         timer[id] = 0;

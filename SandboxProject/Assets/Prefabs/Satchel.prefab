@@ -184,7 +184,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 676f368654814f6498b40b6b9df79f7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  satchelTimeToExplode: 0.1
+  satchelTimeToExplode: 0.05
   id: 0
 --- !u!136 &5466181265931390993
 CapsuleCollider:

@@ -62,6 +62,15 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Dash"",
+                    ""type"": ""Button"",
+                    ""id"": ""f6b33a5a-9d86-4d31-9122-32c2a5e03822"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -108,6 +117,17 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
                     ""action"": ""Aim"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0e633cf8-c8b3-43be-a5f4-6ce22c8778af"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -148,6 +168,7 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
         m_Player_ExplodeSatchel = m_Player.FindAction("ExplodeSatchel", throwIfNotFound: true);
         m_Player_DropSatchel = m_Player.FindAction("Drop Satchel", throwIfNotFound: true);
         m_Player_Aim = m_Player.FindAction("Aim", throwIfNotFound: true);
+        m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
         // Menu
         m_Menu = asset.FindActionMap("Menu", throwIfNotFound: true);
         m_Menu_Restart = m_Menu.FindAction("Restart", throwIfNotFound: true);
@@ -216,6 +237,7 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_ExplodeSatchel;
     private readonly InputAction m_Player_DropSatchel;
     private readonly InputAction m_Player_Aim;
+    private readonly InputAction m_Player_Dash;
     public struct PlayerActions
     {
         private @NewControls m_Wrapper;
@@ -224,6 +246,7 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
         public InputAction @ExplodeSatchel => m_Wrapper.m_Player_ExplodeSatchel;
         public InputAction @DropSatchel => m_Wrapper.m_Player_DropSatchel;
         public InputAction @Aim => m_Wrapper.m_Player_Aim;
+        public InputAction @Dash => m_Wrapper.m_Player_Dash;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -245,6 +268,9 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
             @Aim.started += instance.OnAim;
             @Aim.performed += instance.OnAim;
             @Aim.canceled += instance.OnAim;
+            @Dash.started += instance.OnDash;
+            @Dash.performed += instance.OnDash;
+            @Dash.canceled += instance.OnDash;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -261,6 +287,9 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
             @Aim.started -= instance.OnAim;
             @Aim.performed -= instance.OnAim;
             @Aim.canceled -= instance.OnAim;
+            @Dash.started -= instance.OnDash;
+            @Dash.performed -= instance.OnDash;
+            @Dash.canceled -= instance.OnDash;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -330,6 +359,7 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
         void OnExplodeSatchel(InputAction.CallbackContext context);
         void OnDropSatchel(InputAction.CallbackContext context);
         void OnAim(InputAction.CallbackContext context);
+        void OnDash(InputAction.CallbackContext context);
     }
     public interface IMenuActions
     {
