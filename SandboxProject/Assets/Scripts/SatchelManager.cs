@@ -145,7 +145,7 @@ public class SatchelManager : MonoBehaviour
     private void DropSatchelAmmo(int id)
     {
         _satchelAmmos[id].isAvailable = false;
-        _currentSatchel = Instantiate(satchelPrefab, player.position, Quaternion.identity);
+        _currentSatchel = Instantiate(satchelPrefab, AimBehavior.instance.finalAimPos, Quaternion.identity);
         _activeSatchel = true;
         _satchelAmmos[id].uiImage.fillAmount = 0;
         timer[id] = 0;

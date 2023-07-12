@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 4697682725242365619}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 33.2, y: 33.2, z: 33.2}
+  m_LocalScale: {x: 43.5, y: 43.5, z: 43.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 5690044823955961234}
@@ -95,6 +95,7 @@ GameObject:
   - component: {fileID: 5690044823955961234}
   - component: {fileID: 1477821369861870183}
   - component: {fileID: 6275394794389034944}
+  - component: {fileID: 5466181265931390993}
   m_Layer: 0
   m_Name: Satchel
   m_TagString: Untagged
@@ -183,4 +184,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 676f368654814f6498b40b6b9df79f7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  satchelTimeToExplode: 2
+  satchelTimeToExplode: 0.1
+  id: 0
+--- !u!136 &5466181265931390993
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7664177773812682638}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Radius: 4.5
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}

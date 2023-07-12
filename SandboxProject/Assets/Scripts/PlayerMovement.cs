@@ -9,10 +9,11 @@ using UnityEngine.SceneManagement;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movement Parameters")]
-    [SerializeField] private float moveSpeed = 0f;
     [SerializeField] private float strengh = 0f;
     [SerializeField] private AnimationCurve movementCurve;
+    public float velocityDebug;
 
+    private float moveSpeed = 0f;
     public static PlayerMovement instance;
     private float time;
     private bool timePass;
@@ -34,6 +35,8 @@ public class PlayerMovement : MonoBehaviour
         _input.Player.Movement.performed += OnMovementPerformed;
         _input.Player.Movement.canceled += OnMovementCancelled;
         _input.Menu.Restart.performed += OnRestartButton;
+        _input.Player.Aim.performed += AimBehavior.instance.OnAimPerformed;
+        _input.Player.Aim.canceled += AimBehavior.instance.OnAimCancelled;
     }
 
     private void OnDisable()
@@ -42,11 +45,14 @@ public class PlayerMovement : MonoBehaviour
         _input.Player.Movement.performed -= OnMovementPerformed;
         _input.Player.Movement.canceled -= OnMovementCancelled;
         _input.Menu.Restart.performed -= OnRestartButton;
+        _input.Player.Aim.performed -= AimBehavior.instance.OnAimPerformed;
+        _input.Player.Aim.canceled -= AimBehavior.instance.OnAimCancelled;
     }
 
     private void Update()
     {
         if(timePass) time += Time.deltaTime;
+        velocityDebug = _rb.velocity.magnitude;
     }
 
     private void FixedUpdate()

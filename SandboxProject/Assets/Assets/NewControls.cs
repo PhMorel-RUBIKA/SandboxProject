@@ -53,6 +53,15 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Aim"",
+                    ""type"": ""Value"",
+                    ""id"": ""7958b44b-0993-4301-bbeb-ab6ed0bca1cc"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -70,7 +79,7 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""2de2d519-692c-463a-b9f8-bfc46885e85d"",
-                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -81,11 +90,22 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""d500ba75-928f-4e6d-b68a-b02a8b0bc851"",
-                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Drop Satchel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ffae637e-fbf9-467f-82ea-cbea37a46dd9"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Aim"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -127,6 +147,7 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
         m_Player_Movement = m_Player.FindAction("Movement", throwIfNotFound: true);
         m_Player_ExplodeSatchel = m_Player.FindAction("ExplodeSatchel", throwIfNotFound: true);
         m_Player_DropSatchel = m_Player.FindAction("Drop Satchel", throwIfNotFound: true);
+        m_Player_Aim = m_Player.FindAction("Aim", throwIfNotFound: true);
         // Menu
         m_Menu = asset.FindActionMap("Menu", throwIfNotFound: true);
         m_Menu_Restart = m_Menu.FindAction("Restart", throwIfNotFound: true);
@@ -194,6 +215,7 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Movement;
     private readonly InputAction m_Player_ExplodeSatchel;
     private readonly InputAction m_Player_DropSatchel;
+    private readonly InputAction m_Player_Aim;
     public struct PlayerActions
     {
         private @NewControls m_Wrapper;
@@ -201,6 +223,7 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
         public InputAction @Movement => m_Wrapper.m_Player_Movement;
         public InputAction @ExplodeSatchel => m_Wrapper.m_Player_ExplodeSatchel;
         public InputAction @DropSatchel => m_Wrapper.m_Player_DropSatchel;
+        public InputAction @Aim => m_Wrapper.m_Player_Aim;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -219,6 +242,9 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
             @DropSatchel.started += instance.OnDropSatchel;
             @DropSatchel.performed += instance.OnDropSatchel;
             @DropSatchel.canceled += instance.OnDropSatchel;
+            @Aim.started += instance.OnAim;
+            @Aim.performed += instance.OnAim;
+            @Aim.canceled += instance.OnAim;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -232,6 +258,9 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
             @DropSatchel.started -= instance.OnDropSatchel;
             @DropSatchel.performed -= instance.OnDropSatchel;
             @DropSatchel.canceled -= instance.OnDropSatchel;
+            @Aim.started -= instance.OnAim;
+            @Aim.performed -= instance.OnAim;
+            @Aim.canceled -= instance.OnAim;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -300,6 +329,7 @@ public partial class @NewControls: IInputActionCollection2, IDisposable
         void OnMovement(InputAction.CallbackContext context);
         void OnExplodeSatchel(InputAction.CallbackContext context);
         void OnDropSatchel(InputAction.CallbackContext context);
+        void OnAim(InputAction.CallbackContext context);
     }
     public interface IMenuActions
     {
