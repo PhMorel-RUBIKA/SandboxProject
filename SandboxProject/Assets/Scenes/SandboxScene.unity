@@ -1377,6 +1377,7 @@ GameObject:
   - component: {fileID: 841869466}
   - component: {fileID: 841869467}
   - component: {fileID: 841869468}
+  - component: {fileID: 841869469}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -1467,7 +1468,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9f3b690b6d4c2e429253e8b89f39dc9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  strengh: 60
+  strengh: 400
   movementCurve:
     serializedVersion: 2
     m_Curve:
@@ -1493,6 +1494,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   velocityDebug: 0
+  _moveVector: {x: 0, y: 0}
 --- !u!65 &841869464
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1522,9 +1524,9 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 841869460}
   serializedVersion: 4
-  m_Mass: 3
-  m_Drag: 1
-  m_AngularDrag: 0.01
+  m_Mass: 5
+  m_Drag: 5
+  m_AngularDrag: 0.02
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -1590,7 +1592,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 841869460}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d3c22e6d6bb31f945a5bbcd21cd02a55, type: 3}
   m_Name: 
@@ -1599,6 +1601,21 @@ MonoBehaviour:
   aimPlacement: {fileID: 1798559646}
   range: {x: 5, y: 5}
   finalAimPos: {x: 0, y: 0}
+--- !u!114 &841869469
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 841869460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8621d9446d1f2b74fba013d1e61ecdd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dashDistance: 300
+  dashDuration: 1
+  dashCooldown: 1
 --- !u!1 &967710000
 GameObject:
   m_ObjectHideFlags: 0
@@ -1636,7 +1653,7 @@ MonoBehaviour:
   satchelExplosionRange: 4.5
   satchelExplosionStrength: 1
   enemySatchelExplosionStrength: 500
-  cooldownSatchel: 1.2
+  cooldownSatchel: 1
   velocityCurve:
     serializedVersion: 2
     m_Curve:
