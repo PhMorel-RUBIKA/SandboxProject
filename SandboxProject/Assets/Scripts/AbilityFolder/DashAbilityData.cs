@@ -9,6 +9,7 @@ public class DashAbilityData : AbilityData
 
     public override void ExecuteAbility()
     {
-        Vector3 originalPosition = PlayerManager.instance.transform.position;
+        Vector2 dashDirection = PlayerManager.instance.moveDirectionVector.normalized;
+        PlayerManager.instance.GetComponent<Rigidbody>().AddForce(dashDirection * dashDistance, ForceMode.Impulse);
     }
 }

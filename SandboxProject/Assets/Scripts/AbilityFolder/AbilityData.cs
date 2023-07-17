@@ -4,6 +4,6 @@ using UnityEngine;
 
 public abstract class AbilityData : ScriptableObject
 {
-    [SerializeField] private float abilityDuration;
+    public float abilityCooldown;
     public abstract void ExecuteAbility();
 }

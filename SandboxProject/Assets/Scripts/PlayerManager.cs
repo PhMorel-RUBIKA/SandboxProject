@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerManager : MonoBehaviour
@@ -13,6 +14,9 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private float movementSpeed;
     [SerializeField] private AnimationCurve movementAccelerationCurve;
 
+    [Header("Player Ability Variables")] [SerializeField]
+    private AbilityData currentAbility;
+    
     #endregion
     
     #region PrivateVar
@@ -23,8 +27,10 @@ public class PlayerManager : MonoBehaviour
 
     private bool _isTimeMovementPassing;
     private float _movementTimer;
-    private Vector2 _moveDirectionVector;
+    [HideInInspector] public Vector2 moveDirectionVector;
     private float _curveMoveSpeed;
+
+    private bool _isPerformingAbility;
     
     #endregion
 
@@ -42,6 +48,7 @@ public class PlayerManager : MonoBehaviour
         _input.Enable();
         _input.Player.Movement.performed += OnMovementPerformed;
         _input.Player.Movement.canceled += OnMovementCancelled;
+        _input.Player.Ability.performed += OnAbilityPerformed;
     }
     
     private void OnDisable()
@@ -49,6 +56,7 @@ public class PlayerManager : MonoBehaviour
         _input.Disable();
         _input.Player.Movement.performed -= OnMovementPerformed;
         _input.Player.Movement.canceled -= OnMovementCancelled;
+        _input.Player.Ability.performed -= OnAbilityPerformed;
     }
 
     #endregion
@@ -56,6 +64,7 @@ public class PlayerManager : MonoBehaviour
     private void Update()
     {
         TimerForMovementAcceleration();
+        
     }
 
     private void FixedUpdate()
@@ -67,13 +76,13 @@ public class PlayerManager : MonoBehaviour
 
     private void OnMovementPerformed(InputAction.CallbackContext value)
     {
-        _moveDirectionVector = value.ReadValue<Vector2>().normalized;
+        moveDirectionVector = value.ReadValue<Vector2>().normalized;
         _isTimeMovementPassing = true;
     }
     
     private void OnMovementCancelled(InputAction.CallbackContext value)
     {
-        _moveDirectionVector = Vector2.zero;
+        moveDirectionVector = Vector2.zero;
         _isTimeMovementPassing = false;
         _movementTimer = 0;
     }
@@ -81,7 +90,7 @@ public class PlayerManager : MonoBehaviour
     private void DoMovement()
     {
         _curveMoveSpeed = movementAccelerationCurve.Evaluate(_movementTimer);
-        Vector3 moveForce = _moveDirectionVector * _curveMoveSpeed * movementSpeed;
+        Vector3 moveForce = moveDirectionVector * _curveMoveSpeed * movementSpeed;
         _rb.AddForce(moveForce, ForceMode.Impulse);
     }
 
@@ -91,6 +100,26 @@ public class PlayerManager : MonoBehaviour
         {
             _movementTimer += Time.deltaTime;
         }
+    }
+
+    #endregion
+
+    #region AbilityFunction
+
+    private void OnAbilityPerformed(InputAction.CallbackContext value)
+    {
+        if (_isPerformingAbility) return;
+        StartCoroutine(PerformAbility());
+    }
+
+    private IEnumerator PerformAbility()
+    {
+        _isPerformingAbility = true;
+        currentAbility.ExecuteAbility();
+
+        yield return new WaitForSeconds(currentAbility.abilityCooldown);
+        
+        _isPerformingAbility = false;
     }
 
     #endregion
