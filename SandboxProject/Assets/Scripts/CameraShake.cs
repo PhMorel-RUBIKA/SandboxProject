@@ -73,7 +73,9 @@ using UnityEngine;
 
 
 	[System.Serializable]
-	public class Properties {
+	public class Properties
+	{
+		public string name;
 		public float angle;
 		public float strength;
 		public float maxSpeed;

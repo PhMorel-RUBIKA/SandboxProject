@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
@@ -14,15 +15,31 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] private float movementSpeed;
     [SerializeField] private AnimationCurve movementAccelerationCurve;
 
+    [Space]
+    
     [Header("Player Ability Variables")] [SerializeField]
     private AbilityData currentAbility;
+
+    [Space]
     
+    [Header("Player Combat Variables")]
+    [SerializeField] private bool isAttackingEnemy;
+    [SerializeField] private EnemyDetector enemyDetector;
+    [Space] 
+    [SerializeField] public float smallDamage;
+    [SerializeField] public float mediumDamage;
+    [SerializeField] public float highDamage;
+    [Space]
+    [SerializeField] private float attackDuration;
+    [SerializeField] private float offSetOfAttackRush;
+    [SerializeField] private float attackKnockbackStrength;
+    [SerializeField] private GameObject attackVFX;
+
     #endregion
     
     #region PrivateVar
 
     public static PlayerManager instance;
-    private PlayerControls _input;
     private Rigidbody _rb;
 
     private bool _isTimeMovementPassing;
@@ -31,6 +48,9 @@ public class PlayerManager : MonoBehaviour
     private float _curveMoveSpeed;
 
     private bool _isPerformingAbility;
+
+    private EnemyScript _lockedTarget;
+    private Coroutine _attackCoroutine;
     
     #endregion
 
@@ -38,25 +58,8 @@ public class PlayerManager : MonoBehaviour
     private void Awake()
     {
         if (instance == null) instance = this;
-
-        _input = new PlayerControls();
+        
         _rb = GetComponent<Rigidbody>();
-    }
-
-    private void OnEnable()
-    {
-        _input.Enable();
-        _input.Player.Movement.performed += OnMovementPerformed;
-        _input.Player.Movement.canceled += OnMovementCancelled;
-        _input.Player.Ability.performed += OnAbilityPerformed;
-    }
-    
-    private void OnDisable()
-    {
-        _input.Disable();
-        _input.Player.Movement.performed -= OnMovementPerformed;
-        _input.Player.Movement.canceled -= OnMovementCancelled;
-        _input.Player.Ability.performed -= OnAbilityPerformed;
     }
 
     #endregion
@@ -64,7 +67,6 @@ public class PlayerManager : MonoBehaviour
     private void Update()
     {
         TimerForMovementAcceleration();
-        
     }
 
     private void FixedUpdate()
@@ -74,17 +76,15 @@ public class PlayerManager : MonoBehaviour
 
     #region MovementFunction
 
-    private void OnMovementPerformed(InputAction.CallbackContext value)
+    public void OnMovementPerformed(Vector2 value)
     {
-        moveDirectionVector = value.ReadValue<Vector2>().normalized;
+        moveDirectionVector = value.normalized;
         _isTimeMovementPassing = true;
     }
     
-    private void OnMovementCancelled(InputAction.CallbackContext value)
+    public void OnMovementCancelled(InputAction.CallbackContext value)
     {
-        moveDirectionVector = Vector2.zero;
-        _isTimeMovementPassing = false;
-        _movementTimer = 0;
+        CancelMovement();
     }
 
     private void DoMovement()
@@ -92,6 +92,13 @@ public class PlayerManager : MonoBehaviour
         _curveMoveSpeed = movementAccelerationCurve.Evaluate(_movementTimer);
         Vector3 moveForce = moveDirectionVector * _curveMoveSpeed * movementSpeed;
         _rb.AddForce(moveForce, ForceMode.Impulse);
+    }
+
+    private void CancelMovement()
+    {
+        moveDirectionVector = Vector2.zero;
+        _isTimeMovementPassing = false;
+        _movementTimer = 0;
     }
 
     private void TimerForMovementAcceleration()
@@ -106,7 +113,7 @@ public class PlayerManager : MonoBehaviour
 
     #region AbilityFunction
 
-    private void OnAbilityPerformed(InputAction.CallbackContext value)
+    public void OnAbilityPerformed(InputAction.CallbackContext value)
     {
         if (_isPerformingAbility) return;
         StartCoroutine(PerformAbility());
@@ -123,4 +130,80 @@ public class PlayerManager : MonoBehaviour
     }
 
     #endregion
+
+    #region AttackFunction
+
+    public void OnAttackPerformed(attackType type)
+    {
+        if (isAttackingEnemy) return;
+        
+        if (enemyDetector.currentTarget == null) return;
+
+        if (enemyDetector.InputMagnitude() > 0.2f)
+            _lockedTarget = enemyDetector.CurrentTarget();
+        
+        Attack(_lockedTarget, type);
+    }
+
+    private void Attack(EnemyScript target, attackType type)
+    {
+        if (_attackCoroutine != null) StopCoroutine(_attackCoroutine);
+        _attackCoroutine = StartCoroutine(AttackCoroutine(attackDuration));
+
+        if (target == null) return;
+        
+        MoveTowardTarget(target, attackDuration);
+
+        IEnumerator AttackCoroutine(float duration)
+        {
+            CancelMovement();
+            isAttackingEnemy = true;
+            
+            yield return new WaitForSeconds(duration);
+            
+            InputManager.instance.OnDisable();
+            target.TakeDamage(type);
+            DoKnockback(target);
+            Instantiate(attackVFX, transform.position, Quaternion.identity);
+            isAttackingEnemy = false;
+            
+            yield return new WaitForSeconds(.05f);
+            
+            InputManager.instance.OnEnable();
+        }
+    }
+
+    private void DoKnockback(EnemyScript target)
+    {
+        var knockbackDirection = (target.transform.position - transform.position).normalized;
+        var targetRb = target.GetComponent<Rigidbody>();
+        
+        targetRb.AddForce(knockbackDirection * attackKnockbackStrength, ForceMode.Impulse);
+    }
+
+    private void MoveTowardTarget(EnemyScript target, float duration)
+    {
+        transform.DOMove(TargetOffset(target.transform), duration);
+    }
+
+    private float TargetDistance(EnemyScript target)
+    {
+        return Vector2.Distance(transform.position, target.transform.position);
+    }
+
+    private Vector3 TargetOffset(Transform target)
+    {
+        Vector3 position;
+        position = target.position;
+        return Vector3.MoveTowards(position, transform.position, offSetOfAttackRush);
+    }
+
+    #endregion
+}
+
+public enum attackType
+{
+    WATER,
+    ELECTRICITY,
+    FIRE
 }

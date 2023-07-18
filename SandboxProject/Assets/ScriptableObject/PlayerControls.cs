@@ -44,6 +44,33 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""WaterAttack"",
+                    ""type"": ""Button"",
+                    ""id"": ""6280652d-42fe-499f-9a25-f6abbe20dbf9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""FireAttack"",
+                    ""type"": ""Button"",
+                    ""id"": ""6c2d1611-dc56-4c1d-9e1c-daba65d52c45"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ElectricityAttack"",
+                    ""type"": ""Button"",
+                    ""id"": ""146b8188-a5cd-4d5d-98aa-718810826e19"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -66,6 +93,39 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Ability"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fb587d09-c601-4cb6-a926-9ffec3a27c5d"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""WaterAttack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7c022002-9f00-4f72-8c7b-a22edc2b8a37"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""FireAttack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a18d7d0c-bff3-4eee-b9da-5f346dbf9ee4"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ElectricityAttack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -106,6 +166,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Movement = m_Player.FindAction("Movement", throwIfNotFound: true);
         m_Player_Ability = m_Player.FindAction("Ability", throwIfNotFound: true);
+        m_Player_WaterAttack = m_Player.FindAction("WaterAttack", throwIfNotFound: true);
+        m_Player_FireAttack = m_Player.FindAction("FireAttack", throwIfNotFound: true);
+        m_Player_ElectricityAttack = m_Player.FindAction("ElectricityAttack", throwIfNotFound: true);
         // Menu
         m_Menu = asset.FindActionMap("Menu", throwIfNotFound: true);
         m_Menu_Restart = m_Menu.FindAction("Restart", throwIfNotFound: true);
@@ -172,12 +235,18 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Movement;
     private readonly InputAction m_Player_Ability;
+    private readonly InputAction m_Player_WaterAttack;
+    private readonly InputAction m_Player_FireAttack;
+    private readonly InputAction m_Player_ElectricityAttack;
     public struct PlayerActions
     {
         private @PlayerControls m_Wrapper;
         public PlayerActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movement => m_Wrapper.m_Player_Movement;
         public InputAction @Ability => m_Wrapper.m_Player_Ability;
+        public InputAction @WaterAttack => m_Wrapper.m_Player_WaterAttack;
+        public InputAction @FireAttack => m_Wrapper.m_Player_FireAttack;
+        public InputAction @ElectricityAttack => m_Wrapper.m_Player_ElectricityAttack;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -193,6 +262,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Ability.started += instance.OnAbility;
             @Ability.performed += instance.OnAbility;
             @Ability.canceled += instance.OnAbility;
+            @WaterAttack.started += instance.OnWaterAttack;
+            @WaterAttack.performed += instance.OnWaterAttack;
+            @WaterAttack.canceled += instance.OnWaterAttack;
+            @FireAttack.started += instance.OnFireAttack;
+            @FireAttack.performed += instance.OnFireAttack;
+            @FireAttack.canceled += instance.OnFireAttack;
+            @ElectricityAttack.started += instance.OnElectricityAttack;
+            @ElectricityAttack.performed += instance.OnElectricityAttack;
+            @ElectricityAttack.canceled += instance.OnElectricityAttack;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -203,6 +281,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Ability.started -= instance.OnAbility;
             @Ability.performed -= instance.OnAbility;
             @Ability.canceled -= instance.OnAbility;
+            @WaterAttack.started -= instance.OnWaterAttack;
+            @WaterAttack.performed -= instance.OnWaterAttack;
+            @WaterAttack.canceled -= instance.OnWaterAttack;
+            @FireAttack.started -= instance.OnFireAttack;
+            @FireAttack.performed -= instance.OnFireAttack;
+            @FireAttack.canceled -= instance.OnFireAttack;
+            @ElectricityAttack.started -= instance.OnElectricityAttack;
+            @ElectricityAttack.performed -= instance.OnElectricityAttack;
+            @ElectricityAttack.canceled -= instance.OnElectricityAttack;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -270,6 +357,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     {
         void OnMovement(InputAction.CallbackContext context);
         void OnAbility(InputAction.CallbackContext context);
+        void OnWaterAttack(InputAction.CallbackContext context);
+        void OnFireAttack(InputAction.CallbackContext context);
+        void OnElectricityAttack(InputAction.CallbackContext context);
     }
     public interface IMenuActions
     {
